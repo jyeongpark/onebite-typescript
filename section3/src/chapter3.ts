@@ -1,59 +1,81 @@
 /**
- * Unknown 타입
+ * 기본 타입간의 호환성
  */
 
-// unknown 타입은 모든 타입의 슈퍼타입
-// 업캐스팅은 가능하지만 다운캐스팅은 불가능
-function unknownExam() {
-  let a: unknown = 1;
-  let b: unknown = "hello";
-  let c: unknown = true;
-  let d: unknown = null;
-  let e: unknown = undefined;
+let num1: number = 10;
+let num2: 10 = 10;
 
-  let unKnowVar: unknown;
-
-  // let num: number = unKnowVar; // 다운캐스팅 불가능
-}
+num1 = num2;
 
 /**
- * Never 불가능 모순
- * 모든 타입의 서브타입
- * 공집합이라고 이해 가능
+ * 객체 타입간의 호환성
+ *  -> 어떤 객체타입을 다른 객체타입으로 취급해도 괜찮은가?
  */
 
-function neverExam() {
-  function neverFunc(): never {
-    while (true) {}
-  }
+type Animal = {
+  name: string;
+  color: string;
+};
 
-  let num: number = neverFunc(); // 업캐스팅 기능
-  // let never1: never = 10; number타입은 never타입에 다운캐스팅 불가능
-}
+type Dog = {
+  name: string;
+  color: string;
+  breed: string;
+};
+
+let animal: Animal = {
+  name: "기린",
+  color: "yellow",
+};
+
+let dog: Dog = {
+  name: "바둑이",
+  color: "brown",
+  breed: "진도",
+};
+
+animal = dog;
+
+// dog = animal; // 객체타입은 프로퍼티를 기준으로 구조적 타입시스템을 따른다.
+
+type Book = {
+  name: string;
+  price: number;
+};
+
+type ProgrammingBook = {
+  name: string;
+  price: number;
+  skill: string;
+};
+
+let book: Book;
+let programmingBook: ProgrammingBook = {
+  name: "한 입 크기로 잘라먹는 리액트",
+  price: 33000,
+  skill: "react.js",
+};
+
+book = programmingBook;
+// programmingBook = book;
 
 /**
- * Void
- */
-function voidExam() {
-  function VoidFunc(): void {
-    console.log("hi");
-    return undefined;
-  }
-
-  let voidVar: void = undefined; // void타입은 undefined타입의 슈퍼타입이다.
-}
-
-/**
- * any
+ * 초과 프로퍼티 검사
  */
 
-function anyExam() {
-  let unknownVar: unknown;
-  let anyVar: any;
-  let undefinedVar: undefined;
-  let neverVar: never;
+let book2: Book = {
+  name: "한 입 크기로 잘라먹는 리액트",
+  price: 33000,
+  // skill: "react.js", // 초과 프로퍼티 검사때문에
+};
 
-  anyVar = unknownVar;
-  undefinedVar = anyVar; // 타입 계층도를 무시한다. 위험한 타입
-  // neverVar = anyVar; // any타입은 never타입까지는 다운캐스팅 할 수 없다.
-}
+function func(book: Book) {}
+
+func({
+  name: "한 입 크기로 잘라먹는 리액트",
+  price: 33000,
+  // skill: "react.js", // 초과 프로퍼티 검사때문에
+});
+
+// 변수를 초기화하거나 매개변수로 전달할 때 객체 리터럴을 사용하면 초과 프로퍼티 검사로 오류가 난다.
+func(programmingBook);
